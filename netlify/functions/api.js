@@ -29,7 +29,7 @@ const upload = multer({
 const systemPrompt = `You are Amith Assistant, a helpful and friendly AI assistant. You provide clear, accurate, and helpful responses to user questions. You can analyze images and files when provided.`;
 
 // Chat endpoint
-app.post('/api/chat', async (req, res) => {
+app.post('/chat', async (req, res) => {
   try {
     const { message, userId } = req.body;
 
@@ -62,7 +62,7 @@ app.post('/api/chat', async (req, res) => {
 });
 
 // Chat with file endpoint
-app.post('/api/chat-with-file', upload.single('file'), async (req, res) => {
+app.post('/chat-with-file', upload.single('file'), async (req, res) => {
   try {
     const { message, userId } = req.body;
     const file = req.file;
@@ -125,14 +125,14 @@ app.post('/api/chat-with-file', upload.single('file'), async (req, res) => {
 });
 
 // Get history endpoint
-app.get('/api/history/:userId', (req, res) => {
+app.get('/history/:userId', (req, res) => {
   const { userId } = req.params;
   const history = conversations.get(userId) || [];
   res.json({ history: history.filter(msg => msg.role !== 'system') });
 });
 
 // Clear history endpoint
-app.delete('/api/history/:userId', (req, res) => {
+app.delete('/history/:userId', (req, res) => {
   const { userId } = req.params;
   conversations.delete(userId);
   res.json({ message: 'History cleared' });

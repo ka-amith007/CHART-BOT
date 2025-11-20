@@ -4,11 +4,16 @@
   publish = "."
 
 [[redirects]]
-  from = "/api/*"
-  to = "/.netlify/functions/:splat"
+  from = "/chat"
+  to = "/.netlify/functions/api/chat"
   status = 200
 
 [[redirects]]
-  from = "/*"
-  to = "/chat-with-upload.html"
+  from = "/chat-with-file"
+  to = "/.netlify/functions/api/chat-with-file"
+  status = 200
+
+[[redirects]]
+  from = "/history/*"
+  to = "/.netlify/functions/api/history/:splat"
   status = 200
