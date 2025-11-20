@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Amith Assistant Chatbot - Test Interface</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .chat-container {
+            width: 100%;
+            max-width: 600px;
+            height: 700px;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .chat-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            font-size: 1.4em;
+            font-weight: bold;
+        }
+
+        .chat-messages {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            background: #f5f5f5;
+        }
+
+        .message {
+            margin-bottom: 15px;
+            display: flex;
+            animation: fadeIn 0.3s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .message.user {
+            justify-content: flex-end;
+        }
+
+        .message.bot {
+            justify-content: flex-start;
+        }
+
+        .message-content {
+            max-width: 70%;
+            padding: 12px 16px;
+            border-radius: 18px;
+            word-wrap: break-word;
+            white-space: pre-wrap;
+        }
+
+        .message.user .message-content {
+            background: #667eea;
+            color: white;
+            border-bottom-right-radius: 4px;
+        }
+
+        .message.bot .message-content {
+            background: white;
+            color: #333;
+            border-bottom-left-radius: 4px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .chat-input-container {
+            padding: 20px;
+            background: white;
+            border-top: 1px solid #e0e0e0;
+            display: flex;
+            gap: 10px;
+        }
+
+        #userInput {
+            flex: 1;
+            padding: 12px 16px;
+            border: 2px solid #e0e0e0;
+            border-radius: 25px;
+            font-size: 1em;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        #userInput:focus {
+            border-color: #667eea;
+        }
+
+        #sendBtn {
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            font-size: 1em;
+            cursor: pointer;
+            font-weight: bold;
+            transition: transform 0.2s;
+        }
+
+        #sendBtn:hover {
+            transform: scale(1.05);
+        }
+
+        #sendBtn:active {
+            transform: scale(0.95);
+        }
+
+        #sendBtn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .typing-indicator {
+            display: none;
+            padding: 12px 16px;
+            background: white;
+            border-radius: 18px;
+            width: 60px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .typing-indicator span {
+            height: 8px;
+            width: 8px;
+            background: #667eea;
+            border-radius: 50%;
+            display: inline-block;
+            margin: 0 2px;
+            animation: typing 1.4s infinite;
+        }
+
+        .typing-indicator span:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .typing-indicator span:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes typing {
+            0%, 60%, 100% { transform: translateY(0); }
+            30% { transform: translateY(-10px); }
+        }
+
+        .error-message {
+            color: #e74c3c;
+            text-align: center;
+            padding: 10px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="chat-container">
+        <div class="chat-header">
+            <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAA1gAAAMICAYAAAD7SljGAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAABkdJREFUeNrs3QENACAIA0H6lx5kYBOwwE3SvQEAAMB/ZwcAAABYsAAAAFiwAAAAWLAAAABYsAAAAFiwAAAALFgAAAAsWAAAACxYAAAALFgAAAAWLAAAACxYAAAALFgAAAAWLAAAABYsAAAAFiwAAAALFgsAAAALFgAAABYsAAAACxYAAAALFgAAAAsWAAAACxYAAAALFgAAAAsWAAAAFiwAAAAWLAAAABYsAAAAFiwAAAALFgAAAAsWAAAACxYAAAALFgAAAAsWAAAsWAAAACxYAAAALFgAAAAsWAAAACxYAAAALFgAAAAsWAAAACxYAAAALFgsAAAAFiwAAAAWLAAAABYsAAAAFiwAAAAWLAAAABYsAAAAFiwAAAALFgAAAAsWAAAACxYAAAALFgAAAAsWAAAACxYAAAALFgAAAAsWAAAACxYAAACwYAEAALBgAQAAsGABAACwYAEAALBgAQAAsGABAACwYAEAALBgAQAAYMECAABgwQIAAGDBAgAAYMECAABgwQIAAGDBAgAAYMECAABgwQIAAGDBAgAAYMFiwQIAAGDBAgAAYMECAABgwQIAAGDBAgAAYMECAABgwQIAAGDBAgAAYMECAABgwQIAAGDBAgAAYMECAABgwQIAAGDBAgAAYMECAABgwQIAAGDBYsECAABgwQIAAGDBAgAAYMECAABgwQIAAGDBAgAAYMECAABgwQIAAGDBAgAAYMECAABgwQIAAGDBAgAAYMECAABgwQIAAGDBYsECAABgwQIAAGDBAgAAYMECAABgwQIAAGDBAgAAYMECAABgwQIAAGDBAgAAYMECAABgwQIAAGDBAgAAYMECAABgwWLBAgAAYMECAABgwQIAAGDBAgAAYMECAABgwQIAAGDBAgAAYMECAABgwQIAAGDBAgAAYMECAABgwQIAAGDBAgAAYMFiwQIAAGDBAgAAYMECAABgwQIAAGDBAgAAYMECAABgwQIAAGDBAgAAYMECAABgwQIAAGDBAgAAYMECAABgwQIAAGDBYsECAABgwQIAAGDBAgAAYMECAABgwQIAAGDBAgAAYMECAABgwQIAAGDBAgAAYMECAABgwQIAAGDBAgAAYMECAABgwWLBAgAAYMECAABgwQIAAGDBAgAAYMECAABgwQIAAGDBAgAAYMECAABgwQIAAGDBAgAAYMECAABgwQIAAGDBAgAAYMFiwQIAAGDBAgAAYMECAABgwQIAAGDBAgAAYMECAABgwQIAAGDBAgAAYMECAABgwQIAAGDBAgAAYMECAABgwQIAAGDBYsECAABgwQIAAGDBAgAAYMECAABgwQIAAGDBAgAAYMECAABgwQIAAGDBAgAAYMECAABgwQIAAGDBAgAAYMFiwQIAAGDBAgAAYMECAABgwQIAAGDBAgAAYMECAABgwQIAAGDBAgAAYMECAABgwQIAAGDBAgAAYMECAABgwQIAAGDBYsECAABgwQIAAOBcBRgAYKkDH6wjfEYAAAAASUVORK5CYII=" alt="Chatbot Logo" style="width: 60px; height: 60px; margin-bottom: 8px;">
+            <div>Amith Assistant Chatbot</div>
+        </div>
+        <div class="chat-messages" id="chatMessages">
+            <div class="message bot">
+                <div class="message-content">
+                    Hey! 👋 I'm here to help you with coding, career tips, fitness, or any questions. Just ask! 😊
+                </div>
+            </div>
+        </div>
+        <div class="error-message" id="errorMessage"></div>
+        <div class="chat-input-container">
+            <input 
+                type="text" 
+                id="userInput" 
+                placeholder="Type your message..."
+                autocomplete="off"
+            >
+            <button id="sendBtn">Send</button>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:3001/chat';
+        const USER_ID = 'web_user_' + Math.random().toString(36).substr(2, 9);
+
+        const chatMessages = document.getElementById('chatMessages');
+        const userInput = document.getElementById('userInput');
+        const sendBtn = document.getElementById('sendBtn');
+        const errorMessage = document.getElementById('errorMessage');
+
+        function addMessage(content, isUser = false) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${isUser ? 'user' : 'bot'}`;
+            
+            const contentDiv = document.createElement('div');
+            contentDiv.className = 'message-content';
+            contentDiv.textContent = content;
+            
+            messageDiv.appendChild(contentDiv);
+            chatMessages.appendChild(messageDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        function showTypingIndicator() {
+            const typingDiv = document.createElement('div');
+            typingDiv.className = 'message bot';
+            typingDiv.id = 'typingIndicator';
+            
+            const indicator = document.createElement('div');
+            indicator.className = 'typing-indicator';
+            indicator.style.display = 'block';
+            indicator.innerHTML = '<span></span><span></span><span></span>';
+            
+            typingDiv.appendChild(indicator);
+            chatMessages.appendChild(typingDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        function removeTypingIndicator() {
+            const indicator = document.getElementById('typingIndicator');
+            if (indicator) {
+                indicator.remove();
+            }
+        }
+
+        function showError(message) {
+            errorMessage.textContent = message;
+            errorMessage.style.display = 'block';
+            setTimeout(() => {
+                errorMessage.style.display = 'none';
+            }, 5000);
+        }
+
+        async function sendMessage() {
+            const message = userInput.value.trim();
+            
+            if (!message) return;
+
+            // Add user message
+            addMessage(message, true);
+            userInput.value = '';
+            sendBtn.disabled = true;
+
+            // Show typing indicator
+            showTypingIndicator();
+
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        userId: USER_ID,
+                        userMessage: message
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error('Server error');
+                }
+
+                const data = await response.json();
+                
+                // Remove typing indicator and add bot response
+                removeTypingIndicator();
+                addMessage(data.reply, false);
+
+            } catch (error) {
+                removeTypingIndicator();
+                showError('Error connecting to server. Make sure the backend is running on port 3001.');
+                console.error('Error:', error);
+            } finally {
+                sendBtn.disabled = false;
+                userInput.focus();
+            }
+        }
+
+        // Event listeners
+        sendBtn.addEventListener('click', sendMessage);
+        
+        userInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+
+        // Focus input on load
+        userInput.focus();
+    </script>
+</body>
+</html>
