@@ -5,12 +5,7 @@ import cors from "cors";
 import multer from "multer";
 import fs from "fs";
 import path from "path";
-import mongoose from "mongoose";
-import session from "express-session";
-import passport from "passport";
 import { SYSTEM_PROMPT } from "./systemPrompt.js";
-import { setupPassport } from "./config/passport.js";
-import authRoutes from "./routes/auth.js";
 
 dotenv.config();
 
@@ -23,39 +18,6 @@ app.use(cors({
   origin: true,
   credentials: true
 }));
-
-// Session configuration
-app.use(session({
-  secret: process.env.SESSION_SECRET || 'chatbot-session-secret-change-this',
-  resave: false,
-  saveUninitialized: false,
-  cookie: {
-    secure: false, // Set to true in production with HTTPS
-    maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
-  }
-}));
-
-// Passport initialization
-app.use(passport.initialize());
-app.use(passport.session());
-setupPassport();
-
-// MongoDB connection
-const connectDB = async () => {
-  try {
-    if (process.env.MONGODB_URI) {
-      await mongoose.connect(process.env.MONGODB_URI);
-      console.log('✅ MongoDB connected successfully');
-    } else {
-      console.log('⚠️  MongoDB URI not configured - authentication features will be limited');
-    }
-  } catch (error) {
-    console.error('❌ MongoDB connection error:', error.message);
-    console.log('⚠️  Running without database - authentication features will be limited');
-  }
-};
-
-connectDB();
 
 // Serve static files
 app.use(express.static('.'));
@@ -366,15 +328,12 @@ app.delete("/history/:userId", async (req, res) => {
   }
 });
 
-// Mount authentication routes
-app.use('/auth', authRoutes);
-
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
-  console.log(`🚀 Amith Professional Auth System & Chatbot running on port ${PORT}`);
+  console.log(`🚀 Chatbot Server running on port ${PORT}`);
   console.log(`📝 Chat endpoint: http://localhost:${PORT}/chat`);
-  console.log(`🔐 Auth endpoints: http://localhost:${PORT}/auth/*`);
-  console.log(`🌐 Open login.html in your browser to start\n`);
+  console.log(`📁 File upload: http://localhost:${PORT}/chat-with-file`);
+  console.log(`🌐 Open: http://localhost:${PORT}/chat-with-upload.html\n`);
   
   if (!process.env.OPENAI_API_KEY || process.env.OPENAI_API_KEY === 'your_openai_api_key_here') {
     console.log(`⚠️  WARNING: OpenAI API key not configured!`);
