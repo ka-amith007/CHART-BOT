@@ -330,7 +330,10 @@
     </div>
 
     <script>
-        const API_URL = 'http://localhost:3001';
+        // Detect if running locally or on Netlify
+        const API_URL = window.location.hostname === 'localhost' 
+            ? 'http://localhost:3001' 
+            : '/.netlify/functions/api';
         const USER_ID = 'user_' + Date.now();
 
         // Show welcome message on load

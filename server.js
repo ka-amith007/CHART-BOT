@@ -328,6 +328,15 @@ app.delete("/history/:userId", async (req, res) => {
   }
 });
 
+// Test endpoint to check environment variable
+app.get('/test-env', (req, res) => {
+  const varName = process.env.VAR_NAME;
+  res.json({
+    VAR_NAME: varName,
+    message: `Environment variable VAR_NAME = ${varName}`
+  });
+});
+
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
   console.log(`🚀 Chatbot Server running on port ${PORT}`);
