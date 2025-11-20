@@ -1,0 +1,11 @@
+{
+  "name": "netlify-functions",
+  "version": "1.0.0",
+  "dependencies": {
+    "serverless-http": "^3.2.0",
+    "express": "^4.19.0",
+    "cors": "^2.8.5",
+    "multer": "^2.0.2",
+    "openai": "^4.0.0"
+  }
+}
