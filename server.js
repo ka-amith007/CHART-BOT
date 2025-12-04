@@ -38,7 +38,7 @@ const storage = multer.diskStorage({
   }
 });
 
-const upload = multer({ 
+const upload = multer({
   storage: storage,
   limits: { fileSize: 10 * 1024 * 1024 } // 10MB limit
 });
@@ -73,9 +73,9 @@ function getConversationHistory(userId, limit = 10) {
   if (!conversationHistory.has(userId)) {
     return [];
   }
-  
+
   const messages = conversationHistory.get(userId).slice(-limit);
-  
+
   return messages.map(msg => ({
     role: msg.type === "incoming" ? "user" : "assistant",
     content: msg.message
@@ -84,8 +84,8 @@ function getConversationHistory(userId, limit = 10) {
 
 // Health check endpoint
 app.get("/", (req, res) => {
-  res.json({ 
-    status: "running", 
+  res.json({
+    status: "running",
     bot: "Amith Assistant Chatbot",
     version: "1.0.0",
     storage: "in-memory"
@@ -98,15 +98,15 @@ app.post("/chat", async (req, res) => {
     const { userId, userMessage } = req.body;
 
     if (!userId || !userMessage) {
-      return res.status(400).json({ 
-        error: "userId and userMessage are required" 
+      return res.status(400).json({
+        error: "userId and userMessage are required"
       });
     }
 
     // Check if OpenAI key is set
     if (!process.env.OPENAI_API_KEY || process.env.OPENAI_API_KEY === 'your_openai_api_key_here') {
-      return res.status(500).json({ 
-        error: "OpenAI API key not configured. Please add your key to the .env file." 
+      return res.status(500).json({
+        error: "OpenAI API key not configured. Please add your key to the .env file."
       });
     }
 
@@ -137,7 +137,7 @@ app.post("/chat", async (req, res) => {
     saveMessage(userId, reply, "outgoing");
 
     // Send reply back
-    res.json({ 
+    res.json({
       reply,
       userId,
       timestamp: new Date().toISOString()
@@ -145,7 +145,7 @@ app.post("/chat", async (req, res) => {
 
   } catch (err) {
     console.error("Error in /chat:", err);
-    res.status(500).json({ 
+    res.status(500).json({
       error: "Something went wrong. Please try again.",
       details: err.message
     });
@@ -159,15 +159,15 @@ app.post("/chat-with-file", upload.single('file'), async (req, res) => {
     const file = req.file;
 
     if (!userId || !userMessage) {
-      return res.status(400).json({ 
-        error: "userId and userMessage are required" 
+      return res.status(400).json({
+        error: "userId and userMessage are required"
       });
     }
 
     // Check if OpenAI key is set
     if (!process.env.OPENAI_API_KEY || process.env.OPENAI_API_KEY === 'your_openai_api_key_here') {
-      return res.status(500).json({ 
-        error: "OpenAI API key not configured. Please add your key to the .env file." 
+      return res.status(500).json({
+        error: "OpenAI API key not configured. Please add your key to the .env file."
       });
     }
 
@@ -219,7 +219,7 @@ app.post("/chat-with-file", upload.single('file'), async (req, res) => {
       // Clean up uploaded file
       fs.unlinkSync(file.path);
 
-      res.json({ 
+      res.json({
         reply,
         userId,
         fileProcessed: true,
@@ -229,7 +229,7 @@ app.post("/chat-with-file", upload.single('file'), async (req, res) => {
     } else if (file) {
       // Handle non-image files (text/code files)
       const fileContent = fs.readFileSync(file.path, 'utf-8').substring(0, 10000); // Limit to 10k chars
-      
+
       messages.push({
         role: "user",
         content: `${userMessage}\n\nFile content (${file.originalname}):\n\`\`\`\n${fileContent}\n\`\`\``
@@ -248,7 +248,7 @@ app.post("/chat-with-file", upload.single('file'), async (req, res) => {
       // Clean up uploaded file
       fs.unlinkSync(file.path);
 
-      res.json({ 
+      res.json({
         reply,
         userId,
         fileProcessed: true,
@@ -268,7 +268,7 @@ app.post("/chat-with-file", upload.single('file'), async (req, res) => {
       const reply = response.choices[0].message.content;
       saveMessage(userId, reply, "outgoing");
 
-      res.json({ 
+      res.json({
         reply,
         userId,
         timestamp: new Date().toISOString()
@@ -277,13 +277,13 @@ app.post("/chat-with-file", upload.single('file'), async (req, res) => {
 
   } catch (err) {
     console.error("Error in /chat-with-file:", err);
-    
+
     // Clean up file if exists
     if (req.file && fs.existsSync(req.file.path)) {
       fs.unlinkSync(req.file.path);
     }
 
-    res.status(500).json({ 
+    res.status(500).json({
       error: "Something went wrong. Please try again.",
       details: err.message
     });
@@ -343,30 +343,33 @@ app.listen(PORT, () => {
   console.log(`📝 Chat endpoint: http://localhost:${PORT}/chat`);
   console.log(`📁 File upload: http://localhost:${PORT}/chat-with-file`);
   console.log(`🌐 Open: http://localhost:${PORT}/chat-with-upload.html\n`);
-  
+
   if (!process.env.OPENAI_API_KEY || process.env.OPENAI_API_KEY === 'your_openai_api_key_here') {
     console.log(`⚠️  WARNING: OpenAI API key not configured!`);
     console.log(`   Please add your API key to the .env file`);
     console.log(`   Get one at: https://platform.openai.com/api-keys\n`);
   }
-  
+
   if (!process.env.MONGODB_URI) {
     console.log(`⚠️  WARNING: MongoDB URI not configured!`);
     console.log(`   Add MONGODB_URI to .env for authentication features\n`);
   }
-  
+
   if (!process.env.EMAIL_USER || !process.env.EMAIL_PASSWORD) {
     console.log(`⚠️  WARNING: Email credentials not configured!`);
     console.log(`   Add EMAIL_USER and EMAIL_PASSWORD to .env for OTP emails\n`);
   }
-  
+
   const missingOAuth = [];
   if (!process.env.GOOGLE_CLIENT_ID || !process.env.GOOGLE_CLIENT_SECRET) missingOAuth.push('Google');
   if (!process.env.FACEBOOK_APP_ID || !process.env.FACEBOOK_APP_SECRET) missingOAuth.push('Facebook');
   if (!process.env.GITHUB_CLIENT_ID || !process.env.GITHUB_CLIENT_SECRET) missingOAuth.push('GitHub');
-  
+
   if (missingOAuth.length > 0) {
     console.log(`⚠️  WARNING: OAuth credentials missing for: ${missingOAuth.join(', ')}`);
     console.log(`   Add credentials to .env for OAuth login\n`);
   }
 });
+
+// Export for Vercel serverless
+export default app;
