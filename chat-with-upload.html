@@ -1,12 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
-    <title>CHATBOT - AI Assistant</title>
+    <title>Amith - AI Assistant</title>
     <style>
         * {
             margin: 0;
@@ -90,8 +91,15 @@
         }
 
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .message.user {
@@ -128,7 +136,7 @@
             align-items: center;
             gap: 10px;
             padding: 10px;
-            background: rgba(255,255,255,0.2);
+            background: rgba(255, 255, 255, 0.2);
             border-radius: 8px;
             margin-top: 8px;
             font-size: 0.85em;
@@ -277,8 +285,16 @@
         }
 
         @keyframes typing {
-            0%, 60%, 100% { transform: translateY(0); }
-            30% { transform: translateY(-10px); }
+
+            0%,
+            60%,
+            100% {
+                transform: translateY(0);
+            }
+
+            30% {
+                transform: translateY(-10px);
+            }
         }
 
         .error-message {
@@ -289,13 +305,14 @@
         }
     </style>
 </head>
+
 <body>
     <div class="chat-container">
         <div class="chat-header">
             <div class="header-left">
-                <img src="img.png" alt="CHATBOT" class="header-logo">
+                <img src="logo.png" alt="Amith" class="header-logo">
                 <div class="header-title">
-                    <h1>CHATBOT</h1>
+                    <h1>Amith</h1>
                     <p>AI-Powered Assistant</p>
                 </div>
             </div>
@@ -303,7 +320,8 @@
         <div class="chat-messages" id="chatMessages">
             <div class="message bot">
                 <div class="message-content">
-                    Hey! 👋 I'm here to help you with coding, career tips, fitness, or any questions. You can also upload images or files and I'll analyze them for you! 😊
+                    Hey! 👋 I'm here to help you with coding, career tips, fitness, or any questions. You can also
+                    upload images or files and I'll analyze them for you! 😊
                 </div>
             </div>
         </div>
@@ -318,12 +336,8 @@
                     <label class="file-upload-btn" for="fileInput">📎 Attach</label>
                     <input type="file" id="fileInput" accept="image/*,.txt,.js,.py,.java,.html,.css,.json,.md,.pdf">
                 </div>
-                <input 
-                    type="text" 
-                    id="userInput" 
-                    placeholder="Type your message or upload a file..."
-                    autocomplete="off"
-                >
+                <input type="text" id="userInput" placeholder="Type your message or upload a file..."
+                    autocomplete="off">
                 <button id="sendBtn">Send</button>
             </div>
         </div>
@@ -331,13 +345,13 @@
 
     <script>
         // Detect if running locally or on Netlify
-        const API_URL = window.location.hostname === 'localhost' 
-            ? 'http://localhost:3001' 
+        const API_URL = window.location.hostname === 'localhost'
+            ? 'http://localhost:3001'
             : '/.netlify/functions/api';
         const USER_ID = 'user_' + Date.now();
 
         // Show welcome message on load
-        window.onload = function() {
+        window.onload = function () {
             setTimeout(() => {
                 const welcomeMsg = `Welcome! 😊 I'm your AI assistant. I can help with coding, career advice, fitness tips, or anything else. Feel free to upload images or files for analysis! What would you like to know today?`;
                 addMessage(welcomeMsg, false);
@@ -371,14 +385,14 @@
         function addMessage(content, isUser = false, fileInfo = null) {
             const messageDiv = document.createElement('div');
             messageDiv.className = `message ${isUser ? 'user' : 'bot'}`;
-            
+
             const contentDiv = document.createElement('div');
             contentDiv.className = 'message-content';
-            
+
             if (fileInfo && isUser) {
                 const filePreview = document.createElement('div');
                 filePreview.className = 'file-preview';
-                
+
                 if (fileInfo.type.startsWith('image/')) {
                     const img = document.createElement('img');
                     img.src = fileInfo.dataUrl;
@@ -386,15 +400,15 @@
                 } else {
                     filePreview.innerHTML = `<span class="file-icon">📄</span> <span>${fileInfo.name}</span>`;
                 }
-                
+
                 contentDiv.appendChild(filePreview);
             }
-            
+
             const textNode = document.createTextNode(content);
             const textSpan = document.createElement('span');
             textSpan.appendChild(textNode);
             contentDiv.appendChild(textSpan);
-            
+
             messageDiv.appendChild(contentDiv);
             chatMessages.appendChild(messageDiv);
             chatMessages.scrollTop = chatMessages.scrollHeight;
@@ -404,12 +418,12 @@
             const typingDiv = document.createElement('div');
             typingDiv.className = 'message bot';
             typingDiv.id = 'typingIndicator';
-            
+
             const indicator = document.createElement('div');
             indicator.className = 'typing-indicator';
             indicator.style.display = 'block';
             indicator.innerHTML = '<span></span><span></span><span></span>';
-            
+
             typingDiv.appendChild(indicator);
             chatMessages.appendChild(typingDiv);
             chatMessages.scrollTop = chatMessages.scrollHeight;
@@ -432,17 +446,17 @@
 
         async function sendMessage() {
             const message = userInput.value.trim();
-            
+
             if (!message && !selectedFile) return;
 
             const formData = new FormData();
             formData.append('userId', USER_ID);
             formData.append('userMessage', message || 'Please analyze this file.');
-            
+
             let fileInfo = null;
             if (selectedFile) {
                 formData.append('file', selectedFile);
-                
+
                 if (selectedFile.type.startsWith('image/')) {
                     const reader = new FileReader();
                     reader.onload = (e) => {
@@ -482,7 +496,7 @@
                 }
 
                 const data = await response.json();
-                
+
                 removeTypingIndicator();
                 addMessage(data.reply, false);
 
@@ -497,7 +511,7 @@
         }
 
         sendBtn.addEventListener('click', sendMessage);
-        
+
         userInput.addEventListener('keypress', (e) => {
             if (e.key === 'Enter') {
                 sendMessage();
@@ -507,4 +521,5 @@
         userInput.focus();
     </script>
 </body>
+
 </html>

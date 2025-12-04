@@ -1,256 +1,233 @@
-# 🎉 CHATBOT - Professional Authentication System
+# 🤖 Amith - AI Assistant Chatbot
 
-## ✅ What You Have
+A powerful AI-powered chatbot built with OpenAI's GPT-4o-mini, featuring intelligent conversations, image analysis, and file processing capabilities.
 
-A **production-ready AI chatbot** with **enterprise-level authentication**!
-
-### 🔐 Authentication Features:
-- ✅ **Real OTP Email Verification** (6-digit codes, 10-min expiry)
-- ✅ **Google OAuth Login**
-- ✅ **Facebook OAuth Login**
-- ✅ **GitHub OAuth Login**
-- ✅ **JWT Token Sessions** (7-day secure tokens)
-- ✅ **MongoDB Database** (User & OTP storage)
-- ✅ **Welcome Emails** (Professional HTML templates)
-- ✅ **ChatGPT-Style UI** (Modern, professional design)
-
-### 🚫 No Dummy/Fake Authentication:
-- ❌ No hardcoded passwords
-- ❌ No fake OTP codes
-- ❌ No localStorage-only auth
-- ❌ No static user lists
-
-**This is 100% REAL, PRODUCTION-READY!** 🔥
+![Node.js](https://img.shields.io/badge/Node.js-18+-green.svg)
+![Express](https://img.shields.io/badge/Express-4.19-blue.svg)
+![OpenAI](https://img.shields.io/badge/OpenAI-GPT--4o--mini-orange.svg)
+![License](https://img.shields.io/badge/license-MIT-blue.svg)
 
 ---
 
-## 🚀 Quick Start (10 Minutes)
+## ✨ Features
 
-### Step 1: MongoDB (2 minutes)
+- 💬 **Intelligent Conversations** - Natural language processing powered by OpenAI GPT-4o-mini
+- 🖼️ **Image Analysis** - Upload and analyze images with AI vision capabilities
+- 📁 **File Processing** - Support for text, code, and document files (txt, js, py, java, html, css, json, md, pdf)
+- � **Conversation History** - Maintains context across multiple messages
+- 🎨 **Modern UI** - Clean, professional ChatGPT-style interface
+- ⚡ **Real-time Responses** - Fast and responsive chat experience
 
-**Option A - MongoDB Atlas (Cloud, FREE):**
+---
+
+## 🚀 Quick Start
+
+### Prerequisites
+
+- **Node.js** (v18 or higher)
+- **OpenAI API Key** - Get one at [platform.openai.com/api-keys](https://platform.openai.com/api-keys)
+
+### Installation
+
+1. **Clone or download this repository**
+
+2. **Install dependencies**
+   ```bash
+   npm install
+   ```
+
+3. **Configure environment variables**
+   
+   Create a `.env` file in the root directory (or copy from `.env.example`):
+   ```env
+   OPENAI_API_KEY=your_openai_api_key_here
+   PORT=3001
+   ```
+
+4. **Start the server**
+   ```bash
+   npm start
+   ```
+
+5. **Open in browser**
+   
+   Navigate to: **http://localhost:3001/chat-with-upload.html**
+
+---
+
+## 📖 Usage
+
+### Text Chat
+1. Type your message in the input field
+2. Press Enter or click "Send"
+3. Receive AI-powered responses instantly
+
+### Image Analysis
+1. Click the "📎 Attach" button
+2. Select an image file (jpg, png, gif, etc.)
+3. Add a message or question about the image
+4. Click "Send" to get AI analysis
+
+### File Processing
+1. Click the "📎 Attach" button
+2. Select a supported file (txt, js, py, html, css, json, md, pdf)
+3. Ask questions or request analysis
+4. Get intelligent insights about your file
+
+---
+
+## 🛠️ Technology Stack
+
+### Backend
+- **Node.js** - JavaScript runtime
+- **Express.js** - Web application framework
+- **OpenAI API** - GPT-4o-mini for AI conversations
+- **Multer** - File upload handling
+- **dotenv** - Environment variable management
+
+### Frontend
+- **HTML5/CSS3** - Modern web standards
+- **Vanilla JavaScript** - No framework dependencies
+- **Responsive Design** - Works on all devices
+
+---
+
+## � Project Structure
+
 ```
-1. Go to: https://www.mongodb.com/cloud/atlas
-2. Create free account + cluster
-3. Get connection string
-4. Add to .env: MONGODB_URI=mongodb+srv://...
-```
-
-**Option B - Local MongoDB:**
-```powershell
-# Download from: https://www.mongodb.com/try/download/community
-# After installation:
-Start-Service -Name MongoDB
-# Add to .env: MONGODB_URI=mongodb://localhost:27017/chatbot
+CHART BOT/
+├── server.js              # Express server & API endpoints
+├── chat-with-upload.html  # Main chat interface
+├── systemPrompt.js        # AI system prompt configuration
+├── package.json           # Dependencies & scripts
+├── .env                   # Environment variables (create this)
+├── .env.example           # Environment template
+├── logo.png               # Application logo
+└── uploads/               # Temporary file storage
 ```
 
 ---
 
-### Step 2: Gmail SMTP (3 minutes)
+## � API Endpoints
 
+### `POST /chat`
+Send a text message to the AI assistant.
+
+**Request Body:**
+```json
+{
+  "userId": "user_123",
+  "userMessage": "Hello, how are you?"
+}
 ```
-1. Enable 2-Step Verification:
-   https://myaccount.google.com/security
 
-2. Generate App Password:
-   https://myaccount.google.com/apppasswords
-   → Select "Mail" → Copy 16-char password
+### `POST /chat-with-file`
+Send a message with an optional file attachment.
 
-3. Update .env:
-   EMAIL_USER=your.email@gmail.com
-   EMAIL_PASSWORD=abcdefghijklmnop  (no spaces)
-```
+**Form Data:**
+- `userId` - Unique user identifier
+- `userMessage` - Text message
+- `file` - File attachment (optional)
+
+### `GET /history/:userId`
+Retrieve conversation history for a specific user.
+
+### `DELETE /history/:userId`
+Clear conversation history for a specific user.
 
 ---
 
-### Step 3: Generate Secrets (1 minute)
+## ⚙️ Configuration
 
-```powershell
-# Run these in PowerShell:
-node -e "console.log('JWT_SECRET=' + require('crypto').randomBytes(64).toString('hex'))"
-node -e "console.log('SESSION_SECRET=' + require('crypto').randomBytes(64).toString('hex'))"
+### Environment Variables
 
-# Copy outputs to .env file
-```
+| Variable | Required | Description |
+|----------|----------|-------------|
+| `OPENAI_API_KEY` | ✅ Yes | Your OpenAI API key |
+| `PORT` | ❌ No | Server port (default: 3001) |
 
 ---
 
-### Step 4: Start Server
+## 🎯 Features in Detail
 
-```powershell
+### Conversation Memory
+- Maintains last 10 messages per user
+- Provides context-aware responses
+- In-memory storage (no database required)
+
+### File Upload Support
+- **Images**: jpg, png, gif, webp, bmp
+- **Code**: js, py, java, html, css, json
+- **Documents**: txt, md, pdf
+- Maximum file size: 10MB
+
+### AI Capabilities
+- Natural language understanding
+- Code analysis and debugging
+- Image recognition and description
+- Document summarization
+- Multi-turn conversations
+
+---
+
+## 🔒 Security Notes
+
+- Never commit your `.env` file to version control
+- Keep your OpenAI API key secure
+- Uploaded files are automatically deleted after processing
+- CORS is enabled for local development
+
+---
+
+## 📝 Scripts
+
+```bash
+# Start the server
 npm start
-```
 
-Then open: **http://localhost:3001/login.html**
-
----
-
-## 📧 Test Authentication
-
-### Email OTP Login:
-1. Enter name and email
-2. Click "Send OTP"
-3. Check email for 6-digit code
-4. Enter OTP and verify
-5. Start chatting! 🎉
-
-### OAuth Login (Optional):
-- Click Google/Facebook/GitHub button
-- Authorize → Auto-login
-- Start chatting! 🎉
-
----
-
-## 📋 Environment Variables
-
-Your `.env` file needs these values:
-
-```env
-# ===== REQUIRED =====
-OPENAI_API_KEY=your_openai_api_key_here
-PORT=3001
-
-# ===== REQUIRED FOR AUTH =====
-MONGODB_URI=your_mongodb_connection_string
-JWT_SECRET=your_generated_jwt_secret
-SESSION_SECRET=your_generated_session_secret
-EMAIL_USER=your.email@gmail.com
-EMAIL_PASSWORD=your_gmail_app_password
-
-# ===== OPTIONAL (OAuth) =====
-GOOGLE_CLIENT_ID=your_google_client_id
-GOOGLE_CLIENT_SECRET=your_google_client_secret
-FACEBOOK_APP_ID=your_facebook_app_id
-FACEBOOK_APP_SECRET=your_facebook_app_secret
-GITHUB_CLIENT_ID=your_github_client_id
-GITHUB_CLIENT_SECRET=your_github_client_secret
+# Start with auto-reload (development)
+npm run dev
 ```
 
 ---
 
-## 🔍 Troubleshooting
+## � Troubleshooting
 
-### MongoDB Connection Failed
-```
-Error: ECONNREFUSED ::1:27017
-Fix: Install MongoDB or use Atlas, update MONGODB_URI
-```
+### Server won't start
+- Ensure Node.js v18+ is installed
+- Check if port 3001 is available
+- Verify `.env` file exists with valid API key
 
-### OTP Email Not Sent
-```
-Error: Invalid login: 535-5.7.8
-Fix: Use Gmail App Password (not regular password)
-     Enable 2-Step Verification first
-```
+### API Key Error
+- Confirm your OpenAI API key is valid
+- Check for typos in the `.env` file
+- Ensure you have API credits available
 
-### OAuth Not Working
-```
-Error: redirect_uri_mismatch
-Fix: Verify callback URLs:
-     - Google: http://localhost:3001/auth/google/callback
-     - Facebook: http://localhost:3001/auth/facebook/callback
-     - GitHub: http://localhost:3001/auth/github/callback
-```
+### File Upload Issues
+- Check file size (max 10MB)
+- Verify file type is supported
+- Ensure `uploads/` directory exists
 
 ---
 
-## 📚 Documentation
+## � License
 
-- **`QUICKSTART.md`** ⚡ - Fast setup (10 minutes)
-- **`SETUP_GUIDE.md`** 📚 - Detailed guide + troubleshooting
-- **`IMPLEMENTATION_SUMMARY.md`** 🔧 - Technical details
+MIT License - feel free to use this project for personal or commercial purposes.
 
 ---
 
-## 🎯 Features
+## 👨‍� Author
 
-### Authentication:
-- [x] Email OTP verification (Nodemailer + Gmail)
-- [x] Google/Facebook/GitHub OAuth (Passport.js)
-- [x] JWT tokens (7-day expiry)
-- [x] MongoDB user storage
-- [x] Welcome emails
-
-### Chat:
-- [x] AI conversations (OpenAI GPT-4o-mini)
-- [x] Image upload & analysis
-- [x] File upload & processing
-- [x] Conversation history
-- [x] Professional ChatGPT-style UI
-
-### Security:
-- [x] JWT signatures & validation
-- [x] Password hashing (bcrypt)
-- [x] OTP expiration (10 min)
-- [x] Protected endpoints
-- [x] CORS configuration
+**Amith**
 
 ---
 
-## 🏗️ System Architecture
+## 🙏 Acknowledgments
 
-```
-User Browser (login.html) → JWT Token
-                    ↓
-         Express Server (Node.js)
-              /auth/* routes
-                    ↓
-         ┌──────────┴──────────┐
-         ↓                      ↓
-    MongoDB              Gmail SMTP
-  (Users, OTPs)         (OTP Emails)
-         ↓
-    OpenAI API
-  (Chat + Vision)
-```
+- Built with [OpenAI GPT-4o-mini](https://openai.com/)
+- Powered by [Express.js](https://expressjs.com/)
+- UI inspired by modern chat interfaces
 
 ---
 
-## 📦 Tech Stack
-
-**Backend:**
-- Node.js + Express
-- MongoDB + Mongoose
-- Passport.js (OAuth)
-- Nodemailer (Email)
-- JWT (jsonwebtoken)
-- bcrypt (Hashing)
-
-**Frontend:**
-- HTML5/CSS3
-- Vanilla JavaScript
-- Fetch API
-- LocalStorage (JWT)
-
-**APIs:**
-- OpenAI GPT-4o-mini
-- Gmail SMTP
-- Google/Facebook/GitHub OAuth
-
----
-
-## 🎊 Congratulations!
-
-You have a **production-ready authentication system** with:
-
-🔥 Real OTP email verification  
-🔥 Real OAuth social login  
-🔥 Real database storage  
-🔥 Real JWT tokens  
-🔥 Professional UI  
-🔥 No dummy/fake authentication  
-
-**Just configure MongoDB + Gmail and you're LIVE!** 🚀
-
----
-
-## 📞 Support
-
-Check documentation files:
-- `QUICKSTART.md` - Fast setup
-- `SETUP_GUIDE.md` - Complete guide
-- `IMPLEMENTATION_SUMMARY.md` - Technical details
-
----
-
-**Built with ❤️ - Amith Professional Auth System**
+**Ready to chat? Start the server and visit http://localhost:3001/chat-with-upload.html** 🚀
