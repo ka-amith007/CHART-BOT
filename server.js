@@ -86,13 +86,25 @@ function getConversationHistory(userId, limit = 10) {
 }
 
 // Health check endpoint
-app.get("/", (req, res) => {
+// Health check endpoint
+app.get("/health", (req, res) => {
   res.json({
     status: "running",
     bot: "Amith Assistant Chatbot",
     version: "1.0.0",
     storage: "in-memory"
   });
+});
+
+// Serve the chat UI at the root path
+app.get("/", (req, res) => {
+  const indexPath = path.join(path.resolve(), 'chat-with-upload.html');
+  if (fs.existsSync(indexPath)) {
+    res.sendFile(indexPath);
+  } else {
+    // Fallback if file not found (e.g. some serverless structures)
+    res.send('Chatbot is running. Please access /chat-with-upload.html');
+  }
 });
 
 // Main chat endpoint (text only)
