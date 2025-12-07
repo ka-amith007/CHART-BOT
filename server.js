@@ -23,9 +23,12 @@ app.use(cors({
 app.use(express.static('.'));
 
 // Create uploads directory if it doesn't exist
-const uploadsDir = './uploads';
+// Use /tmp for Vercel/serverless environments, otherwise local "uploads" folder
+const uploadsDir = fs.existsSync('/tmp') ? '/tmp/uploads' : './uploads';
+
+// Ensure upload directory exists
 if (!fs.existsSync(uploadsDir)) {
-  fs.mkdirSync(uploadsDir);
+  fs.mkdirSync(uploadsDir, { recursive: true });
 }
 
 // Configure multer for file uploads
@@ -337,39 +340,42 @@ app.get('/test-env', (req, res) => {
   });
 });
 
-const PORT = process.env.PORT || 3001;
-app.listen(PORT, () => {
-  console.log(`🚀 Chatbot Server running on port ${PORT}`);
-  console.log(`📝 Chat endpoint: http://localhost:${PORT}/chat`);
-  console.log(`📁 File upload: http://localhost:${PORT}/chat-with-file`);
-  console.log(`🌐 Open: http://localhost:${PORT}/chat-with-upload.html\n`);
+// Only start the server locally. Vercel handles the serverless function export.
+if (process.env.NODE_ENV !== 'production' && !process.env.VERCEL) {
+  const PORT = process.env.PORT || 3001;
+  app.listen(PORT, () => {
+    console.log(`🚀 Chatbot Server running on port ${PORT}`);
+    console.log(`📝 Chat endpoint: http://localhost:${PORT}/chat`);
+    console.log(`📁 File upload: http://localhost:${PORT}/chat-with-file`);
+    console.log(`🌐 Open: http://localhost:${PORT}/chat-with-upload.html\n`);
 
-  if (!process.env.OPENAI_API_KEY || process.env.OPENAI_API_KEY === 'your_openai_api_key_here') {
-    console.log(`⚠️  WARNING: OpenAI API key not configured!`);
-    console.log(`   Please add your API key to the .env file`);
-    console.log(`   Get one at: https://platform.openai.com/api-keys\n`);
-  }
+    if (!process.env.OPENAI_API_KEY || process.env.OPENAI_API_KEY === 'your_openai_api_key_here') {
+      console.log(`⚠️  WARNING: OpenAI API key not configured!`);
+      console.log(`   Please add your API key to the .env file`);
+      console.log(`   Get one at: https://platform.openai.com/api-keys\n`);
+    }
 
-  if (!process.env.MONGODB_URI) {
-    console.log(`⚠️  WARNING: MongoDB URI not configured!`);
-    console.log(`   Add MONGODB_URI to .env for authentication features\n`);
-  }
+    if (!process.env.MONGODB_URI) {
+      console.log(`⚠️  WARNING: MongoDB URI not configured!`);
+      console.log(`   Add MONGODB_URI to .env for authentication features\n`);
+    }
 
-  if (!process.env.EMAIL_USER || !process.env.EMAIL_PASSWORD) {
-    console.log(`⚠️  WARNING: Email credentials not configured!`);
-    console.log(`   Add EMAIL_USER and EMAIL_PASSWORD to .env for OTP emails\n`);
-  }
+    if (!process.env.EMAIL_USER || !process.env.EMAIL_PASSWORD) {
+      console.log(`⚠️  WARNING: Email credentials not configured!`);
+      console.log(`   Add EMAIL_USER and EMAIL_PASSWORD to .env for OTP emails\n`);
+    }
 
-  const missingOAuth = [];
-  if (!process.env.GOOGLE_CLIENT_ID || !process.env.GOOGLE_CLIENT_SECRET) missingOAuth.push('Google');
-  if (!process.env.FACEBOOK_APP_ID || !process.env.FACEBOOK_APP_SECRET) missingOAuth.push('Facebook');
-  if (!process.env.GITHUB_CLIENT_ID || !process.env.GITHUB_CLIENT_SECRET) missingOAuth.push('GitHub');
+    const missingOAuth = [];
+    if (!process.env.GOOGLE_CLIENT_ID || !process.env.GOOGLE_CLIENT_SECRET) missingOAuth.push('Google');
+    if (!process.env.FACEBOOK_APP_ID || !process.env.FACEBOOK_APP_SECRET) missingOAuth.push('Facebook');
+    if (!process.env.GITHUB_CLIENT_ID || !process.env.GITHUB_CLIENT_SECRET) missingOAuth.push('GitHub');
 
-  if (missingOAuth.length > 0) {
-    console.log(`⚠️  WARNING: OAuth credentials missing for: ${missingOAuth.join(', ')}`);
-    console.log(`   Add credentials to .env for OAuth login\n`);
-  }
-});
+    if (missingOAuth.length > 0) {
+      console.log(`⚠️  WARNING: OAuth credentials missing for: ${missingOAuth.join(', ')}`);
+      console.log(`   Add credentials to .env for OAuth login\n`);
+    }
+  });
+}
 
 // Export for Vercel serverless
 export default app;
