@@ -345,9 +345,10 @@
 
     <script>
         // Detect if running locally or on Netlify
+        // Detect if running locally or on Vercel
         const API_URL = window.location.hostname === 'localhost'
             ? 'http://localhost:3001'
-            : '/.netlify/functions/api';
+            : ''; // Relative path for Vercel (calls /chat-with-file matches server.js route)
         const USER_ID = 'user_' + Date.now();
 
         // Show welcome message on load
