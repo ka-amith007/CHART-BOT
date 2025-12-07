@@ -12,6 +12,10 @@
     ],
     "routes": [
         {
+            "src": "/",
+            "dest": "/chat-with-upload.html"
+        },
+        {
             "src": "/chat-with-upload.html",
             "dest": "/chat-with-upload.html"
         },
